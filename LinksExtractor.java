@@ -6,23 +6,29 @@ import java.io.IOException;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 
-//Javadocs and an external method that "completes the links" are pending
+//An external method that "completes the links" are pending
+
+/**A class that extracts links from an URL*/
 public class LinksExtractor {
 
 	private URL url = null;
 
+	/**Class constructor that takes an URL as an argument*/
 	public LinksExtractor(URL x) {
 		url = x;
 	}
 
+	/**Class constructor that takes a String as an argument and creates an URL*/
 	public LinksExtractor(String x) throws MalformedURLException {
 		url = new URL(x);
 	}
 
+	/**Returns URL*/
 	public URL getUrl() {
 		return url;
 	}
 
+	/**An assistant method that returns a String with the HTML code of the URL*/ 
 	public String getString() throws IOException {
 		BufferedReader buffer = null;
 		buffer = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -35,6 +41,7 @@ public class LinksExtractor {
 		return builder.toString();
 	}
 
+	/**An assistant method that returns the number (int) of links in a HTML code*/
 	public int hrefCounter() throws IOException {
 		BufferedReader buffer = null;
 		buffer = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -63,6 +70,7 @@ public class LinksExtractor {
 		return f;
 	}
 
+	/**A method that returns an ArrayList with the links of HTML code*/ 
 	public ArrayList<String> getLinks() throws IOException {
 		ArrayList<String> links = new ArrayList<String>();
 		BufferedReader buffer = null;
