@@ -11,8 +11,16 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class TestDB2 {
-
+	
 	public static void main(String[] args) {
+		
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			System.out.println("Driver Loaded");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		final String DATABASE_URL = "jdbc:sqlserver://@@@@@@";  // instead of @@@@@ use path of the database
 		final String SELECT_QUERY = "SELECT * FROM ex1_Customer";
 
