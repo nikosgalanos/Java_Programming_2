@@ -33,7 +33,9 @@ public class UrlCheck {
 
 	public static String CorrectUrl(String motherUrl , String childUrl) {
 
-		if (childUrl.startsWith("http")){
+		if (childUrl.startsWith(" ") || childUrl.startsWith("#") || childUrl.startsWith("mailto")) {
+			return "-1";
+		} else if (childUrl.startsWith("http")){
 			return childUrl;
 		} else if(childUrl.startsWith("/")){
 			return motherUrl + childUrl;
