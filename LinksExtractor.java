@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class LinksExtractor {
 
 	private URL url = null;
+	private String urlString;
 
 	/**Class constructor that takes an URL as an argument*/
 	public LinksExtractor(URL x) {
@@ -21,6 +22,7 @@ public class LinksExtractor {
 	/**Class constructor that takes a String as an argument and creates an URL*/
 	public LinksExtractor(String x) throws MalformedURLException {
 		url = new URL(x);
+		urlString = x;
 	}
 
 	/**Returns URL*/
@@ -98,6 +100,7 @@ public class LinksExtractor {
 				while ((ch = buffer.read()) != '"') {
 					link.append((char) ch);
 				}
+				//correct Url format
 				if (UrlCheck.CorrectUrl(urlString, link.toString()) != "-1") {
 					links.add(Url.Check.CorrectUrl(urlString, link.toString()));
 				}
