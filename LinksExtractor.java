@@ -102,7 +102,7 @@ public class LinksExtractor {
 				}
 				//correct Url format
 				if (UrlCheck.CorrectUrl(urlString, link.toString()) != "-1") {
-					links.add(Url.Check.CorrectUrl(urlString, link.toString()));
+					links.add(UrlCheck.CorrectUrl(urlString, link.toString()));
 				}
 			}
 		}
