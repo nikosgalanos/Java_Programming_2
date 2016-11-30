@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 
-//An external method that "completes the links" are pending
-
 /**A class that extracts links from an URL*/
 public class LinksExtractor {
 
