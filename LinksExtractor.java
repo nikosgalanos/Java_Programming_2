@@ -98,7 +98,9 @@ public class LinksExtractor {
 				while ((ch = buffer.read()) != '"') {
 					link.append((char) ch);
 				}
-				links.add(link.toString());
+				if (UrlCheck.CorrectUrl(urlString, link.toString()) != "-1") {
+					links.add(Url.Check.CorrectUrl(urlString, link.toString()));
+				}
 			}
 		}
 		buffer.close();
