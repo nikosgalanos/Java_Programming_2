@@ -41,35 +41,6 @@ public class LinksExtractor {
 		return builder.toString();
 	}
 
-	/**An assistant method that returns the number (int) of links in a HTML code*/
-	public int hrefCounter() throws IOException {
-		BufferedReader buffer = null;
-		buffer = new BufferedReader(new InputStreamReader(url.openStream()));
-		int f = 0;
-		char[] last4 = new char[5];
-		boolean flag = true;
-		int ch;
-		while ((ch = buffer.read()) != -1) {
-			if (flag) {
-				last4[1] = (char) ch;
-				last4[2] = (char) buffer.read();
-				last4[3] = (char) buffer.read();
-				last4[4] = (char) buffer.read();
-				flag = false;
-			} else {
-				last4[1] = last4[2];
-				last4[2] = last4[3];
-				last4[3] = last4[4];
-				last4[4] = (char) ch;
-			}
-			if ( last4[1] == 'h' && last4[2] == 'r' && last4[3] == 'e' && last4[4] == 'f') {
-				f = f + 1;
-			}
-		}
-		buffer.close();
-		return f;
-	}
-
 	/**A method that returns an ArrayList with the links of HTML code*/ 
 	public ArrayList<String> getLinks() throws IOException {
 		ArrayList<String> links = new ArrayList<String>();
