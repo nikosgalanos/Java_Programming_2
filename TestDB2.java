@@ -16,8 +16,8 @@ public class DataBaseConn {
 	
 	//fields
 	
-	private static String link = "karxies";
-	private static String path = "laika korasia";
+	private static String link = "1";
+	private static String path = "2";
 
 	// setters and getters
 	
