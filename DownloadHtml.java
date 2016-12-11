@@ -37,6 +37,7 @@ public class DownloadHtml {
 		// streams which help to read from the url
 		InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
 		BufferedReader br = new BufferedReader(is);
+		br.mark(0);
 		
 		// streams which help to write from the url
 		FileOutputStream fos = new FileOutputStream(file);
@@ -48,8 +49,9 @@ public class DownloadHtml {
 			bw.write(inputLine);
 			bw.newLine();
 		}
+		br.close();
 		bw.close(); //closes the writer stream
-	
+		
 		return "C:\\Users\\Vaggelis\\Desktop\\DownloadHtml\\" + folderName + "\\" + fileName + ".txt";
 	}
 	

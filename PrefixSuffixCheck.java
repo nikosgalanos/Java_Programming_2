@@ -1,4 +1,5 @@
 package main;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class PrefixSuffixCheck {
@@ -17,7 +18,7 @@ public class PrefixSuffixCheck {
 		urlString=url;
 	}
 	
-	public boolean suffix () {
+	public boolean suffix () throws MalformedURLException {
 		int i;
 		for (i=0; i<notApprovedSuffixes.length; i++) {
 			if (urlString.endsWith(notApprovedSuffixes[i])) {
@@ -30,12 +31,12 @@ public class PrefixSuffixCheck {
 			}
 		}
 		for (i=0; i<approvedSuffixes.length; i++) {
-			if (urlString.endsWith(approvedSuffixes[i])) {
+			if (urlString.endsWith(approvedSuffixes[i]))  {
 				return true;
-			}
+			}	
 		}
 		for (i=0; i<approvedContains.length; i++) {
-			if (urlString.contains(approvedContains[i])) {
+			if (urlString.contains(approvedContains[i]))  {
 				return true;
 			}
 		}
@@ -48,5 +49,7 @@ public class PrefixSuffixCheck {
 		}
 		return false;
 	}
+	
+	
 	
 }

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class LinksExtractorVag {
+	private static final CharSequence[] approvedContains = {".html", ".htm", ".asp", ".aspx", ".php", ".jsp", ".jspx", ".xml"};
 	private URL url;
 	private HashSet<String> links = new HashSet<String>(1);
 
@@ -30,10 +31,23 @@ public class LinksExtractorVag {
 				if (link.startsWith("/")) {
 					link = adder(link);
 				}
+				else if (!link.startsWith("http")){
+					boolean flag=false;
+					for (int i=0; i<approvedContains.length; i++) {
+						if (link.contains(approvedContains[i])) {
+							flag=true;
+							break;
+						}
+					}
+					if (flag) {
+						link = "/"+link;
+						link = adder(link);
+					}
+				}
 
 				PrefixSuffixCheck psc = new PrefixSuffixCheck(link);
 
-				if (psc.prefix() && psc.suffix()) {
+				if (psc.suffix() && psc.prefix() ) {
 					previousSize = links.size();
 					links.add(link);
 					afterSize = links.size();
