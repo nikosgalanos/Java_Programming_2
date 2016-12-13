@@ -9,14 +9,29 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Random;
+import java.util.Scanner;
 
 public class DownloadHtml {
 	private URL url;
+	private static String path;
 	private static final char[] ab = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
 									  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 	
 	public DownloadHtml(URL url) {
 		this.url = url;
+	}
+	
+	public static void setPath() {
+
+		Scanner scn = new Scanner(System.in);
+		System.out.print("Please enter the folder in which the html files will saved: ");
+		path = scn.nextLine();
+		File testFile = new File(path);
+		while (!testFile.exists()) {
+			System.out.print("This folder does not exist. Please enter a valid folder: ");
+			path = scn.nextLine();
+			testFile = new File(path);
+		}
 	}
 	
 	public String parseAndSaveHtml () throws UnsupportedEncodingException, IOException {
@@ -25,34 +40,39 @@ public class DownloadHtml {
 		
 		// creates the folder's name from the domain name
 		String folderName = nameFolder();	
-		File folderNameFile = new File("C:\\Users\\Vaggelis\\Desktop\\DownloadHtml\\"+folderName);
+		File folderNameFile = new File(path + "\\" + folderName);
 		if (!existsFolder(folderNameFile)) {
 			makeFolder(folderNameFile);
 		}
 		
 		// creates the file with a random unique name
 		String fileName = generateFileName(folderName);
-		File file = new File("C:\\Users\\Vaggelis\\Desktop\\DownloadHtml\\" + folderName + "\\" + fileName + ".txt");
+		File file = new File(path + "\\" + folderName + "\\" + fileName + ".txt");
 		
-		// streams which help to read from the url
-		InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
-		BufferedReader br = new BufferedReader(is);
-		br.mark(0);
+		try {
+			// streams which help to read from the url
+			InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
+			BufferedReader br = new BufferedReader(is);
+			br.mark(0);
+			
+			// streams which help to write from the url
+			FileOutputStream fos = new FileOutputStream(file);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+			BufferedWriter bw = new BufferedWriter(osw);
+			
+			// reads line by line the html code
+			while ((inputLine = br.readLine()) != null) {
+				bw.write(inputLine);
+				bw.newLine();
+			}
+			br.close();
+			bw.close(); //closes the writer stream
 		
-		// streams which help to write from the url
-		FileOutputStream fos = new FileOutputStream(file);
-		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-		BufferedWriter bw = new BufferedWriter(osw);
-		
-		// reads line by line the html code
-		while ((inputLine = br.readLine()) != null) {
-			bw.write(inputLine);
-			bw.newLine();
+			return path + "\\" + folderName + "\\" + fileName + ".txt";
+		} catch (IOException e) {
+			file.delete();
+			return null;
 		}
-		br.close();
-		bw.close(); //closes the writer stream
-		
-		return "C:\\Users\\Vaggelis\\Desktop\\DownloadHtml\\" + folderName + "\\" + fileName + ".txt";
 	}
 	
 	// returns the domain name so as to name the folder
@@ -103,7 +123,7 @@ public class DownloadHtml {
 				sb.append(ab[ran2.nextInt(26)]);
 			}
 			fileName = sb.toString();
-			File testFile = new File("C:\\Users\\Vaggelis\\Desktop\\DownloadHtml\\" + folderName + "\\" + fileName + ".txt");
+			File testFile = new File(path + "\\" + folderName + "\\" + fileName + ".txt");
 			if (!existsFile(testFile)) {
 				break;
 			}
