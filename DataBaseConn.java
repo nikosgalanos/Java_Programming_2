@@ -70,7 +70,7 @@ public class DataBaseConn {
 			Statement statement = connection.createStatement();
 			DataBaseConn.setLink(urlName.toString());
 			DataBaseConn.setPath(finale.get(urlName).toString());
-			statement.executeUpdate("INSERT INTO" + db[3] +  "VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
+			statement.executeUpdate("INSERT INTO " + db[3] +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
 			statement.close();
 		}
 		connection.close();
