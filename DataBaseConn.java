@@ -66,10 +66,10 @@ public class DataBaseConn {
 		}
 		String[] db = DataBaseConn.getConnectionData();
 		Connection connection = DriverManager.getConnection(db[0], db[1], db[2]);
-		for (String urlName : finale.keySet()) {
+		for (URL urlName : finale.keySet()) {
 			Statement statement = connection.createStatement();
 			DataBaseConn.setLink(urlName.toString());
-			DataBaseConn.setPath(finale.get(urlName));
+			DataBaseConn.setPath(finale.get(urlName).toString());
 			statement.executeUpdate("INSERT INTO" + db[3] +  "VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
 			statement.close();
 		}
