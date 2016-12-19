@@ -4,66 +4,46 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class LinksExtractorVag {
-	private static final CharSequence[] approvedContains = {".html", ".htm", ".asp", ".aspx", ".php", ".jsp", ".jspx", ".xml"};
+	public static final int MAX_SIZE_PATH=5;
 	private URL url;
 	private HashSet<String> links = new HashSet<String>(1);
+	private CharSequence[] approvedContains = {".html", ".htm", ".asp", 
+		".aspx", ".php", ".jsp", ".jspx", ".xml"};
 
 	public LinksExtractorVag(URL url) {
 		this.url = url;
 	}
 
 	public void linksFilter () throws IOException {
-		int hrefPosition, wwwPosition, endPosition, previousSize, afterSize;
 		InputStreamReader inputStream = new InputStreamReader(url.openStream());
 		BufferedReader in = new BufferedReader(inputStream);
 		String inputLine, link;
+		String[] temp = new String[2];
+		int temp1;
 
 		while ((inputLine = in.readLine())!=null) {
-			hrefPosition=inputLine.indexOf("href=\"");
-			if (hrefPosition != -1) {
-				wwwPosition=hrefPosition+6;
-				endPosition=inputLine.indexOf("\"",wwwPosition);
-				link = inputLine.substring(wwwPosition, endPosition);
-
-				if (link.startsWith("/")) {
-					link = adder(link);
+			temp1=0;
+			for(;;) {
+				temp=findLink(inputLine,temp1);
+				if (temp[1]==null) {
+					break;
 				}
-				else if (!link.startsWith("http")){
-					boolean flag=false;
-					for (int i=0; i<approvedContains.length; i++) {
-						if (link.contains(approvedContains[i])) {
-							flag=true;
-							break;
-						}
-					}
-					if (flag) {
-						link = "/"+link;
-						link = adder(link);
-					}
-				}
-
+				temp1 = Integer.parseInt(temp[1]);
+				link=checkFirstSlash(temp[0]);
 				PrefixSuffixCheck psc = new PrefixSuffixCheck(link);
-
-				if (psc.suffix() && psc.prefix() ) {
-					previousSize = links.size();
+				
+				if (psc.suffix() && psc.prefix() && keepSmallUrls(link)) {
 					links.add(link);
-					afterSize = links.size();
-					if (afterSize == previousSize +1) {
-						/*System.out.println("Link: "+link+" ADDED");*/
-					}
-					else {
-						/*System.out.println("Link: "+ link+ " ALREADY EXISTS");*/
-					}
-				}
-				else {
+				} else {
 					/*System.out.println("Link: "+ link +" DOESN'T FULFILL THE PREREQUISITES");*/
 				}
-
+				
 			}
+			
 		}
+		
 	}
 
 	public String adder (String link) {
@@ -77,17 +57,58 @@ public class LinksExtractorVag {
 		}
 	}
 
-	public void printHashSet () {
-		int j=0;
-		Iterator<String> i = links.iterator();
-		while(i.hasNext()) {
-			j++;
-	        System.out.println("Link " +j+" :"+ i.next());
-	    }
-	}
-
 	public HashSet<String> accessHashSet () {
 		return links;
 	}
-
+	
+	public boolean keepSmallUrls (String link) {
+		int count=0;
+		StringBuffer sb = new StringBuffer(link);
+		for (int k=0;k<sb.length();k++) {
+			if (sb.charAt(k) == '/') {
+				count++;
+			}
+		}
+		if (count<=MAX_SIZE_PATH) {
+			return true;
+		}
+		return false;
+	}
+	
+	public String checkFirstSlash (String link) {
+		if (link.startsWith("/")) {
+			link = adder(link);
+		}
+		else if (!link.startsWith("http")){
+			boolean flag=false;
+			for (int i=0; i<approvedContains.length; i++) {
+				if (link.contains(approvedContains[i])) {
+					flag=true;
+					break;
+				}
+			}
+			if (flag) {
+				link = "/"+link;
+				link = adder(link);
+			}
+		}
+		/*System.out.println("FIXED LINK: " + link);*/
+		return link;
+	}
+	
+	public String[] findLink (String inputLine, int firstHrefIndex) {
+		Integer hrefPosition, wwwPosition, endPosition;
+		String temp[] = {null,null};
+		String link;
+		hrefPosition=inputLine.indexOf("href=\"", firstHrefIndex+1);
+		if (hrefPosition != -1) {
+			wwwPosition=hrefPosition+6;
+			endPosition=inputLine.indexOf("\"",wwwPosition);
+			link = inputLine.substring(wwwPosition, endPosition);
+			temp[0]=link; temp[1]=hrefPosition.toString();
+			return temp;
+		}
+		return temp;
+	}
+	
 }

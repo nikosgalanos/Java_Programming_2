@@ -5,10 +5,14 @@ import java.net.URL;
 public class PrefixSuffixCheck {
 	
 	private String urlString;
-	private static final String[] approvedSuffixes = {".html", ".htm", ".asp", ".aspx", ".php", ".jsp", ".jspx", ".xml", "/"};
-	private static final CharSequence[] approvedContains = {".html", ".htm", ".asp", ".aspx", ".php", ".jsp", ".jspx", ".xml"};
-	private static final String[] notApprovedSuffixes = {".jpeg", ".ico", ".css", ".png", ".doc", ".pdf", ".jpg", ".js", ".rdf"};
-	private static final CharSequence[] notApprovedContains = {".jpeg", ".ico", ".css", ".png", ".doc", ".pdf", ".jpg", ".js", "/css", ".rdf"};
+	private static final String[] approvedSuffixes = {".html", ".htm", ".asp", ".aspx", 
+			".php", ".jsp", ".jspx", ".xml", "/"};
+	private static final CharSequence[] approvedContains = {".html", ".htm", ".asp", 
+			".aspx", ".php", ".jsp", ".jspx", ".xml"};
+	private static final String[] notApprovedSuffixes = {".jpeg", ".ico", ".css", 
+			".png", ".doc", ".pdf", ".jpg", ".js", ".rdf"};
+	private static final CharSequence[] notApprovedContains = {".jpeg", ".ico", ".css", 
+			".png", ".doc", ".pdf", ".jpg", ".js", "/css", ".rdf", "javascript"};
 	
 	public PrefixSuffixCheck (URL url) {
 		urlString=url.toString();
