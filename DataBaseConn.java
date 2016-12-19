@@ -62,7 +62,7 @@ public class DataBaseConn {
 		
 	// method calls getConnectionData, makes the connection to the database and then inserts the url and file path
 	// into the correct column of the created database table
-	public void insertData(HashMap<URL,String> finale) throws SQLException {
+	public void insertData(HashMap<String, String> finale) throws SQLException {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			System.out.println("Driver Loaded");
@@ -72,10 +72,10 @@ public class DataBaseConn {
 		}
 		String[] db = DataBaseConn.getConnectionData();
 		Connection connection = DriverManager.getConnection(db[0], db[1], db[2]);
-		for (URL urlName : finale.keySet()) {
+		for (String urlName : finale.keySet()) {
 			Statement statement = connection.createStatement();
-			DataBaseConn.setLink(urlName.toString());
-			DataBaseConn.setPath(finale.get(urlName).toString());
+			DataBaseConn.setLink(urlName);
+			DataBaseConn.setPath(finale.get(urlName));
 			statement.executeUpdate("INSERT INTO " + db[3] +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
 			statement.close();
 		}
