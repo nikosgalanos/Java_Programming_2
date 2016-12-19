@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.lang.StringBuilder;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**A class that extracts links from an URL*/
 public class LinksExtractor {
@@ -30,62 +32,67 @@ public class LinksExtractor {
 		return url;
 	}
 
-	/**An assistant method that returns a String with the HTML code of the URL*/ 
-	public String getString() throws IOException {
-		BufferedReader buffer = null;
-		buffer = new BufferedReader(new InputStreamReader(url.openStream()));
-		int ch;
-		StringBuilder builder = new StringBuilder();
-		while ((ch = buffer.read()) != -1) {
-			builder.append((char) ch);
-		}
-		buffer.close();
-		return builder.toString();
-	}
-
-	/**A method that returns an HashSet with the links of HTML code*/ 
+	/**Returns a HashSet<String> with the links are contained in the URL*/
 	public HashSet<String> getLinks() {
+
 		HashSet<String> links = new HashSet<String>();
 		BufferedReader buffer = null;
 		try {
 			buffer = new BufferedReader(new InputStreamReader(url.openStream()));
-			char[] last4 = new char[5];
+			Queue<Character> sample = new LinkedList<Character>();
 			boolean flag = true;
 			int ch;
+			String finalLink;
 			while ((ch = buffer.read()) != -1) {
 				if (flag) {
-					last4[1] = (char) ch;
-					last4[2] = (char) buffer.read();
-					last4[3] = (char) buffer.read();
-					last4[4] = (char) buffer.read();
+					sample.add(conv(ch));
+					for (int i = 0; i < 4; i++) {
+						sample.add(conv(buffer.read()));
+					}
 					flag = false;
 				} else {
-					last4[1] = last4[2];
-					last4[2] = last4[3];
-					last4[3] = last4[4];
-					last4[4] = (char) ch;
+					sample.remove();
+					sample.add(conv(ch));
 				}
-				if ( last4[1] == 'h' && last4[2] == 'r' && last4[3] == 'e' && last4[4] == 'f') {
+				if (equalsHref(sample)) {
 					StringBuilder link = new StringBuilder();
 					buffer.read();
-					buffer.read();
 					while ((ch = buffer.read()) != '"') {
-						link.append((char) ch);
+						link.append(conv(ch));
 					}
-					//correct Url format
-					if (UrlCheck.CorrectUrl(urlString, link.toString()) != "-1") {
-						links.add(UrlCheck.CorrectUrl(urlString, link.toString()));
+					//System.out.println(link);
+					finalLink = UrlCheck.CorrectUrl(urlString, link.toString());
+					PrefixSuffixCheck check = new PrefixSuffixCheck(finalLink);
+					if (check.suffix() && check.prefix()) {
+						links.add(finalLink);
 					}
 				}
 			}
 			buffer.close();
 		} catch (IOException e) {
-			System.out.println("1 exception caught and handled in LinksExtractor class");
+			//System.out.println("1 exception caught and handled in LinksExtractor class");
 			return null;
 		}
 		return links;
 	}
-}
 
+	public char conv(int x) {
+		return (char) x;
+	}
+
+	public boolean equalsHref(Queue<Character> q) {
+		Queue<Character> href = new LinkedList<Character>();
+		href.add('h');
+		href.add('r');
+		href.add('e');
+		href.add('f');
+		href.add('=');
+		if (q.equals(href)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
 
 
