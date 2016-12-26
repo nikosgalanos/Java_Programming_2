@@ -1,4 +1,3 @@
-package main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +15,7 @@ public class LinksExtractorVag {
 		this.url = url;
 	}
 
-	public void linksFilter () throws IOException {
+	public void linksFilter () throws IOException{
 		InputStreamReader inputStream = new InputStreamReader(url.openStream());
 		BufferedReader in = new BufferedReader(inputStream);
 		String inputLine, link;
@@ -26,24 +25,28 @@ public class LinksExtractorVag {
 		while ((inputLine = in.readLine())!=null) {
 			temp1=0;
 			for(;;) {
-				temp=findLink(inputLine,temp1);
+				try {
+					temp=findLink(inputLine,temp1);
+				} catch (StringIndexOutOfBoundsException e){
+					break;
+				}
 				if (temp[1]==null) {
 					break;
 				}
 				temp1 = Integer.parseInt(temp[1]);
 				link=checkFirstSlash(temp[0]);
 				PrefixSuffixCheck psc = new PrefixSuffixCheck(link);
-				
+					
 				if (psc.suffix() && psc.prefix() && keepSmallUrls(link)) {
+					/*System.out.println("LINK ADDED: "+link);*/
 					links.add(link);
 				} else {
-					/*System.out.println("Link: "+ link +" DOESN'T FULFILL THE PREREQUISITES");*/
+					/*System.out.println("DOESN'T FULFILL THE PREREQUISITES: "+ link);*/
 				}
 				
 			}
 			
-		}
-		
+		}	
 	}
 
 	public String adder (String link) {
@@ -76,10 +79,16 @@ public class LinksExtractorVag {
 	}
 	
 	public String checkFirstSlash (String link) {
-		if (link.startsWith("/")) {
+		if (link.startsWith("/") && !link.startsWith("//")) {
+			/*System.out.println("LINK STARTS WITH /: "+ link);*/
 			link = adder(link);
+			/*System.out.println("FIXED LINK: " + link);*/
+		}
+		else if (link.startsWith("//")) {
+			/*Do nothing*/
 		}
 		else if (!link.startsWith("http")){
+			/*System.out.println("LINK DOESNT START WITH HTTP: "+ link);*/
 			boolean flag=false;
 			for (int i=0; i<approvedContains.length; i++) {
 				if (link.contains(approvedContains[i])) {
@@ -88,11 +97,13 @@ public class LinksExtractorVag {
 				}
 			}
 			if (flag) {
+				/*System.out.println("LINK CONTAINS APPROVED CONTAINS: "+ link);*/
 				link = "/"+link;
 				link = adder(link);
+				/*System.out.println("FIXED LINK: " + link);*/
 			}
 		}
-		/*System.out.println("FIXED LINK: " + link);*/
+		
 		return link;
 	}
 	

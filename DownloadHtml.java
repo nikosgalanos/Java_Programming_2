@@ -1,4 +1,3 @@
-package main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,25 +5,39 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Random;
+
+/**
+ * Class which performs the connection with the webpage, downloads the source code of the page and writes it into a new file.
+ * The name of the file is produced automatically using an object from the Random class.
+ * The file is placed in a folder whose name comes from the domain of the webpage.
+ * 
+ * @author Web Masters
+ *
+ */
 
 public class DownloadHtml {
 	private URL url;
 	private String path;
 	private static final char[] ab = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
 									  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-	
+	/**
+	 * Constructor
+	 * @param url The URL of the page we want to save
+	 * @param path The local path of the folder in which the data will be stored.
+	 */
 	public DownloadHtml(URL url, String path) {
 		this.url = url;
 		this.path = path+"\\";
 	}
 	
-	public String parseAndSaveHtml () throws UnsupportedEncodingException, IOException {
-		
+	/**
+	 * @return the local path of the file saved
+	 */
+	public String parseAndSaveHtml() {
 		String inputLine;
-			
+		
 		// creates the folder's name from the domain name
 		String folderName = nameFolder();	
 		File folderNameFile = new File(path+folderName);
@@ -36,25 +49,31 @@ public class DownloadHtml {
 		String fileName = generateFileName(folderName);
 		File file = new File(path + folderName + "\\" + fileName + ".txt");
 		
-		// streams which help to read from the url
-		InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
-		BufferedReader br = new BufferedReader(is);
-		br.mark(0);
-				
-		// streams which help to write from the url
-		FileOutputStream fos = new FileOutputStream(file);
-		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-		BufferedWriter bw = new BufferedWriter(osw);
-				
-		// reads line by line the html code
-		while ((inputLine = br.readLine()) != null) {
-			bw.write(inputLine);
-			bw.newLine();
+		try {
+			// streams which help to read from the url
+			InputStreamReader is = new InputStreamReader(url.openStream(), "UTF-8");
+			BufferedReader br = new BufferedReader(is);
+			br.mark(0);
+			
+			// streams which help to write from the url
+			FileOutputStream fos = new FileOutputStream(file);
+			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+			BufferedWriter bw = new BufferedWriter(osw);
+					
+			// reads line by line the html code
+			while ((inputLine = br.readLine()) != null) {
+				bw.write(inputLine);
+				bw.newLine();
+			}
+			br.close();
+			bw.close(); //closes the writer stream
+			
+			return path + folderName + "\\" + fileName + ".txt";
+		} catch (IOException e) {
+			file.delete();
+			return null;
 		}
-		br.close();
-		bw.close(); //closes the writer stream
 		
-		return path + folderName + "\\" + fileName + ".txt";
 	}
 	
 	// returns the domain name so as to name the folder
