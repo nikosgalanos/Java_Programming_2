@@ -1,7 +1,10 @@
-/* This class is made for making a connection to a local database.
- * It inserts into an already created table the full form of the examined url as well as the computer-path where the .html file
+/** Class which performs a connection to a local database.
+ * It inserts into a pre-created table the full form of the examined url as well as the computer-path where the .html file
  * of the url is saved.
  * The class which will create an object of this class might use the "insertData" method which will do the pre-described job.
+ * 
+ * @author Web Masters
+ * 
  */
 import java.net.URL;
 import java.sql.Connection;
@@ -9,21 +12,32 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class DataBaseConn {
 	
-	// fields
+	// local fields to handle the examined url the .html computer-path
 	private static String link;
 	private static String path;
 	
-	// Class constructor using no arguments
+	/** Class constructor
+	 * 
+	 * There is no parameter used. The class which will create an object of this class might use the insertData method
+	 * on this particular object
+	 */
 	
 	public DataBaseConn() {
 	}
 	
-	// setters and getters
+	/** setters and getters 
+	 * so as to handle the local fields
+	 * 
+	 */
 	
+	/**
+	 * 
+	 * @return link: link saved in a HashMap, ready to be copied into the database
+	 */
 	public static String getLink() {
 		return link;
 	}
@@ -32,6 +46,10 @@ public class DataBaseConn {
 		link = Link;
 	}
 
+	/**
+	 * 
+	 * @return path: computer path which indicates the computer location where the .html file of the examined link is saved
+	 */
 	public static String getPath() {
 		return path;
 	}
@@ -40,17 +58,17 @@ public class DataBaseConn {
 		path = Path;
 	}
 		
-	// method created to make the user insert the required data to make the database Connection 
+	/** This method's purpose is to ask the user of this app
+	 *  all the necessary information such as the Local database path or the log-in data
+	 *  in order to perform a connection to the database. It uses a user-interface environment to be more user-friendly.
+	 *  @return data: a table in which the obtained data are temporarily saved so that they can be used in the insertData method
+	 * 
+	 */
 	public static String[] getConnectionData() {
-		Scanner input = new Scanner(System.in);
-		System.out.print("Please insert your local database path: ");
-		String dbPath = input.nextLine();
-		System.out.print("Please insert your username: ");
-		String username = input.nextLine();
-		System.out.print("Please insert your password: ");
-		String password  = input.nextLine();
-		System.out.print("Please insert your table-name: ");
-		String tableName = input.nextLine();
+		String dbPath = JOptionPane.showInputDialog("Enter your local database path:");
+		String username = JOptionPane.showInputDialog("Enter your username:");
+		String password  = JOptionPane.showInputDialog("Enter your password:");
+		String tableName = JOptionPane.showInputDialog("Enter your pre-created table name:");
 		String[] data = new String[4];
 		data[0] = dbPath;
 		data[1] = username;
@@ -59,8 +77,14 @@ public class DataBaseConn {
 		return data;
 	}
 		
-	// method calls getConnectionData, makes the connection to the database and then inserts the url and file path
-	// into the correct column of the created database table
+	/** This method calls the getConnectionData method, 
+	 * performs the connection to the database using the obtained data
+	 *  and then inserts the url and file path
+	 *  into the correct column of the created database table
+	 * @param finale: a HashMap in which all the examined urls and their computer paths are saved
+	 * method scans the HashMap and copies the keys and their values into the database
+	 * @throws SQLException
+	 */
 	public void insertData(HashMap<URL,String> finale) throws SQLException {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
