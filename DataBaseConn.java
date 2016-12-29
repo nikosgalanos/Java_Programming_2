@@ -6,19 +6,30 @@
  * @author Web Masters
  * 
  */
+import java.awt.Component;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JOptionPane;
+
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 public class DataBaseConn {
 	
 	// local fields to handle the examined url the .html computer-path
 	private static String link;
 	private static String path;
+	private static Component parentComponent = null;
+	private static String databasePath = null;
+	private static String username = null;
+	private static String password = null;
+	private static String tableName = null;
 	
 	/** Class constructor
 	 * 
@@ -64,17 +75,11 @@ public class DataBaseConn {
 	 *  @return data: a table in which the obtained data are temporarily saved so that they can be used in the insertData method
 	 * 
 	 */
-	public static String[] getConnectionData() {
-		String dbPath = JOptionPane.showInputDialog("Enter your local database path:");
-		String username = JOptionPane.showInputDialog("Enter your username:");
-		String password  = JOptionPane.showInputDialog("Enter your password:");
-		String tableName = JOptionPane.showInputDialog("Enter your pre-created table name:");
-		String[] data = new String[4];
-		data[0] = dbPath;
-		data[1] = username;
-		data[2] = password;
-		data[3] = tableName;
-		return data;
+	public static void getConnectionData() {
+		databasePath = getDatabasePath();
+		username = getUsername();
+		password  = getPassword();
+		tableName = getTableName();
 	}
 		
 	/** This method calls the getConnectionData method, 
@@ -93,17 +98,106 @@ public class DataBaseConn {
 			System.out.println("Driver not Loaded - Something went wrong");
 			e.printStackTrace();
 		}
-		String[] db = DataBaseConn.getConnectionData();
-		Connection connection = DriverManager.getConnection(db[0], db[1], db[2]);
+		Connection connection = null;
+		for(;;) {
+			try {
+				DataBaseConn.getConnectionData();
+				connection = DriverManager.getConnection(databasePath, username, password);
+			}
+			catch (SQLServerException e) {
+				JOptionPane.showMessageDialog(parentComponent, "Error, not correct database path, username or password. Please try again.");
+				continue;
+			}
+			break;
+		}
+		
+		Statement statement = connection.createStatement();
+		for (;;) {
+			try {
+				statement.executeUpdate("INSERT INTO " + tableName + " VALUES('blank', 'blank')");
+			}
+			catch (SQLServerException e) {
+				JOptionPane.showMessageDialog(parentComponent, "Error, not correct table name. Please try again.");
+				tableName=getTableName();
+				continue;
+			}
+			statement.executeUpdate("DELETE FROM " + tableName);
+			statement.close();
+			break;
+		}
+		
 		for (URL urlName : finale.keySet()) {
-			Statement statement = connection.createStatement();
-			if (urlName.toString()==null) System.out.println("WRONG! "+urlName.toString());
+			statement = connection.createStatement();
+			/*if (urlName.toString()==null) System.out.println("WRONG! "+urlName.toString());*/
 			DataBaseConn.setLink(urlName.toString());
-			if (finale.get(urlName).toString()==null) System.out.println("WRONG! "+urlName.toString());
+			/*if (finale.get(urlName).toString()==null) System.out.println("WRONG! "+urlName.toString());*/
 			DataBaseConn.setPath(finale.get(urlName).toString());
-			statement.executeUpdate("INSERT INTO " + db[3] +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
+			statement.executeUpdate("INSERT INTO " + tableName +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
 			statement.close();
 		}
 		connection.close();
+	}
+	
+	public static String getDatabasePath() {
+		String databasePath = null;
+		String databasePathEx="^jdbc:sqlserver://.+:1025;databaseName=.+$";
+		Pattern p = Pattern.compile(databasePathEx);
+			for(;;) {
+				databasePath = JOptionPane.showInputDialog("Enter your local database path:");
+				if (databasePath==null) {
+					continue;
+				}
+			    Matcher m = p.matcher(databasePath);
+				if (m.matches()) {
+					break;
+				}
+				else {
+					JOptionPane.showMessageDialog(parentComponent, "Error, not correct syntax. Please try again.");
+					continue;
+				}
+			}
+			return databasePath;
+	}
+	
+	public static String getUsername() {
+		String username = null;
+			for(;;) {
+				username = JOptionPane.showInputDialog("Enter your username:");
+				if (username==null) {
+					continue;
+				}
+				else {
+					break;
+				}
+			}
+			return username;
+	}
+	
+	public static String getPassword() {
+		String password = null;
+			for(;;) {
+				password = JOptionPane.showInputDialog("Enter your password:");
+				if (password==null) {
+					continue;
+				}
+				else {
+					break;
+				}
+			}
+			return password;
+	}
+	
+	public static String getTableName() {
+		String tableName = null;
+			for(;;) {
+				tableName = JOptionPane.showInputDialog("Enter your pre-created table name:");
+				if (tableName==null) {
+					continue;
+				}
+				else {
+					break;
+				}
+			}
+			return tableName;
 	}
 }

@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -8,7 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class Crawl {
 	
@@ -16,8 +18,8 @@ public class Crawl {
 	private Queue<URL> links = new LinkedList<URL>();
 	private HashMap<URL,String> finalList = new HashMap<URL,String>();
 	private String path;
-	private Scanner input = new Scanner(System.in);
 	private static int doubleLinks=0;
+	private static Component parentComponent = null;
 	
 	public Crawl(String startingURL) throws MalformedURLException {
 		this.startingURL = new URL(startingURL);
@@ -96,6 +98,7 @@ public class Crawl {
 		insertDataToDB();
 	}
 	
+	
 	public URL pullFirstElement(Queue<URL> q) {
 		return q.poll();
 	}
@@ -129,17 +132,24 @@ public class Crawl {
 	}
 	
 	public String setPath() {
-
-		Scanner scn = new Scanner(System.in);
+		File folder;
 		System.out.println("Please enter the folder in which the html files will be saved:");
-		path = scn.nextLine();
-		File testFolder = new File(path);
-		while (!testFolder.exists()) {
-			System.out.print("This folder does not exist. Please enter a valid folder: ");
-			path = scn.nextLine();
-			testFolder = new File(path);
+		JFileChooser fc = new JFileChooser();
+
+		fc.setCurrentDirectory(new java.io.File("."));
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setAcceptAllFileFilterUsed(false);
+		for(;;) {
+			int returnVal = fc.showOpenDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				folder = fc.getSelectedFile();
+				break;
+			}
+			else if (returnVal == JFileChooser.CANCEL_OPTION) {
+				continue;
+			}
 		}
-		return path;
+		return folder.toString();
 	}
 	
 	public float minutesCounter(long start) {
@@ -149,13 +159,35 @@ public class Crawl {
 	}
 	
 	public float getWaitingTime() {
-		System.out.println("How much time do you want to wait? (in minutes)");
-		return (float)input.nextInt(); 
+		String min = null;
+		for(;;) {
+			try {
+				min = JOptionPane.showInputDialog("How much time do you want to wait? (in minutes)");
+				Integer.parseInt(min);
+			}
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(parentComponent, "Error, null or not an integer. Please try again.");
+				continue;
+			}
+			break;
+		}
+		return Float.parseFloat(min);
 	}
 	
 	public int getLinksPerPage() {
-		System.out.println("How much links do you want per page?");
-		return input.nextInt();
+		String pages = null;
+		for(;;) {
+			try {
+				pages = JOptionPane.showInputDialog("How much links do you want per page?");
+				Integer.parseInt(pages);
+			}
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(parentComponent, "Error, null or not an integer. Please try again.");
+				continue;
+			}
+			break;
+		}
+		return Integer.parseInt(pages);
 	}
 	
 	public void addLinkstoQueue () {

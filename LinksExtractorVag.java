@@ -85,7 +85,7 @@ public class LinksExtractorVag {
 			/*System.out.println("FIXED LINK: " + link);*/
 		}
 		else if (link.startsWith("//")) {
-			/*Do nothing*/
+			/* Do nothing */
 		}
 		else if (!link.startsWith("http")){
 			/*System.out.println("LINK DOESNT START WITH HTTP: "+ link);*/

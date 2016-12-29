@@ -24,8 +24,8 @@ public class DownloadHtml {
 									  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 	/**
 	 * Constructor
-	 * @param url The URL of the page we want to save
-	 * @param path The local path of the folder in which the data will be stored.
+	 * @param url the URL of the page we want to save
+	 * @param path the local path of the folder in which the data will be stored.
 	 */
 	public DownloadHtml(URL url, String path) {
 		this.url = url;
@@ -33,6 +33,7 @@ public class DownloadHtml {
 	}
 	
 	/**
+	 * Method which creates a folder (if needed) and saves into it the html page line by line.
 	 * @return the local path of the file saved
 	 */
 	public String parseAndSaveHtml() {
@@ -76,9 +77,12 @@ public class DownloadHtml {
 		
 	}
 	
-	// returns the domain name so as to name the folder
+	/**
+	 * Method which produces a name for a new folder
+	 * @return the name of the new folder created
+	 */
 	public String nameFolder() {
-		String stringUrl = urlToString();
+		String stringUrl = url.toString();
 		int position1 = stringUrl.indexOf("://www."); 				    // position of first "w"
 		int position2; 						 					        // position before the country's suffix
 		
@@ -93,12 +97,11 @@ public class DownloadHtml {
 		}
 	}
 	
-	// converts Url to String
-	public String urlToString() {
-		return url.toString();
-	}
-	
-	// returns true if the folder has already been created
+	/**
+	 * Method which helps to check if a folder exists
+	 * @param folderNameFile the name of the folder which we want to know if already exists
+	 * @return true if the folder exists or false if the folder doesn't exist
+	 */
 	public boolean existsFolder(File folderNameFile) {
 		if (folderNameFile.exists()) {
 			return true;
@@ -106,13 +109,20 @@ public class DownloadHtml {
 		return false;
 	}
 	
-	// creates a directory with the given name
+	/**
+	 * Method which makes a folder with a specific name
+	 * @param folderNameFile File object which contains the path of the new folder we want to create
+	 */
 	public void makeFolder (File folderNameFile) {
 		folderNameFile.mkdir();
 	}
 	
-	// produces the file name which has this format x000000000
-	// x: random letter | 0: random digit
+
+	/**
+	 * Method which produces a random file name which has this format: x000000000 (x: random alphabet letter, 0: random digit 0-9)
+	 * @param folderName the name of the folder in which we want to put the new file
+	 * @return the new file's name
+	 */
 	public String generateFileName (String folderName) {
 		StringBuilder sb = new StringBuilder(10);
 		String fileName;
@@ -132,7 +142,11 @@ public class DownloadHtml {
 		return fileName;
 	}
 	
-	// returns true if there is a file with the same name in the directory
+	/**
+	 * Method which checks if a file already exists in a directory
+	 * @param testFile File object which contains the path of the file we want to create
+	 * @return true if the file already exists or false if the file is not contained in the given directory
+	 */
 	public boolean existsFile (File testFile) {
 		if (testFile.exists()) {
 			return true;
