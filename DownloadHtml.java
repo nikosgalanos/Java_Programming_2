@@ -21,6 +21,10 @@ public class DownloadHtml {
 	private String path;
 	private static final char[] ab = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
 									  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+	private static final String[] randomWords = {"roof", "threatening", "hurried", "friend", "chance", "befitting",
+			"eight", "occur", "lamp", "rainstorm", "macho", "crime", "toe", "pest", "beds", "color", "geese", "intend",
+			"yoke", "bent", "wide-eyed", "tame", "warm", "middle", "wandering", "trace", "perpetual", "limit", "literate",
+			"furtive"};
 	/**
 	 * Constructor
 	 * @param url: the URL of the page we want to save
@@ -82,7 +86,7 @@ public class DownloadHtml {
 	}
 	
 	/**
-	 * Method which produces a name for a new folder
+	 * Method which produces a name for a new folder and handles any possible exceptions
 	 * @return the name of the new folder created
 	 */
 	private String nameFolder() {
@@ -90,14 +94,19 @@ public class DownloadHtml {
 		int position1 = stringUrl.indexOf("://www."); 				    // position of first ":"
 		int position2; 						 					        // position before the country's suffix
 		
-		// case link is something "http://listofrandomwords.com/"
-		if (position1 == -1) {
-			position1 = stringUrl.indexOf("://"); 					    // position of ":"
-			position2 = stringUrl.indexOf(".", 6);						// position of first "."
-			return stringUrl.substring(position1 + 3, position2);		// position + 3 = first letter of domain
-		} else {
-			position2 = stringUrl.indexOf(".", 12);						// position of second "."
-			return stringUrl.substring(position1 + 7, position2);		// position + 7 = first letter of domain
+		try {
+			// case link is something "http://listofrandomwords.com/"
+			if (position1 == -1) {
+				position1 = stringUrl.indexOf("://"); 					    // position of ":"
+				position2 = stringUrl.indexOf(".", 6);						// position of first "."
+				return stringUrl.substring(position1 + 3, position2);   // position + 3 = first letter of domain
+			} else {
+				position2 = stringUrl.indexOf(".", 12);						// position of second "."
+				return stringUrl.substring(position1 + 7, position2);	// position + 7 = first letter of domain
+			}
+		} catch (StringIndexOutOfBoundsException e) {
+			Random ran = new Random(randomWords.length-1);
+			return randomWords[ran.nextInt()];
 		}
 	}
 	
