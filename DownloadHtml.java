@@ -14,7 +14,6 @@ import java.util.Random;
  * The file is placed in a folder whose name comes from the domain of the webpage.
  * 
  * @author Web Masters
- *
  */
 
 public class DownloadHtml {
@@ -24,11 +23,13 @@ public class DownloadHtml {
 									  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 	/**
 	 * Constructor
-	 * @param url the URL of the page we want to save
-	 * @param path the local path of the folder in which the data will be stored.
+	 * @param url: the URL of the page we want to save
+	 * @param path: the local path of the folder in which the data will be stored.
 	 */
 	public DownloadHtml(URL url, String path) {
 		this.url = url;
+		
+		// comes to a form "C:\Vaggelis\Desktop\DownloadHtml" so we transform it into "C:\Vaggelis\Desktop\DownloadHtml\"
 		this.path = path+"\\";
 	}
 	
@@ -37,12 +38,15 @@ public class DownloadHtml {
 	 * @return the local path of the file saved
 	 */
 	public String parseAndSaveHtml() {
+		// the line of the html code
 		String inputLine;
 		
 		// creates the folder's name from the domain name
 		String folderName = nameFolder();	
-		File folderNameFile = new File(path+folderName);
-		if (!existsFolder(folderNameFile)) {
+		File folderNameFile = new File(path + folderName);
+		
+		// checks if there is already a folder with the same name
+		if (! existsFolder(folderNameFile)) {
 			makeFolder(folderNameFile);
 		}
 			
@@ -81,19 +85,19 @@ public class DownloadHtml {
 	 * Method which produces a name for a new folder
 	 * @return the name of the new folder created
 	 */
-	public String nameFolder() {
+	private String nameFolder() {
 		String stringUrl = url.toString();
-		int position1 = stringUrl.indexOf("://www."); 				    // position of first "w"
+		int position1 = stringUrl.indexOf("://www."); 				    // position of first ":"
 		int position2; 						 					        // position before the country's suffix
 		
 		// case link is something "http://listofrandomwords.com/"
 		if (position1 == -1) {
-			position1 = stringUrl.indexOf("://"); 					    // "://" is after http and before domain name
-			position2 = stringUrl.indexOf(".", 6);
+			position1 = stringUrl.indexOf("://"); 					    // position of ":"
+			position2 = stringUrl.indexOf(".", 6);						// position of first "."
 			return stringUrl.substring(position1 + 3, position2);		// position + 3 = first letter of domain
 		} else {
-			position2 = stringUrl.indexOf(".",12);
-			return stringUrl.substring(position1 + 7, position2);		// position + 4 = first letter of domain
+			position2 = stringUrl.indexOf(".", 12);						// position of second "."
+			return stringUrl.substring(position1 + 7, position2);		// position + 7 = first letter of domain
 		}
 	}
 	
@@ -102,7 +106,7 @@ public class DownloadHtml {
 	 * @param folderNameFile the name of the folder which we want to know if already exists
 	 * @return true if the folder exists or false if the folder doesn't exist
 	 */
-	public boolean existsFolder(File folderNameFile) {
+	private boolean existsFolder(File folderNameFile) {
 		if (folderNameFile.exists()) {
 			return true;
 		}
@@ -113,7 +117,7 @@ public class DownloadHtml {
 	 * Method which makes a folder with a specific name
 	 * @param folderNameFile File object which contains the path of the new folder we want to create
 	 */
-	public void makeFolder (File folderNameFile) {
+	private void makeFolder (File folderNameFile) {
 		folderNameFile.mkdir();
 	}
 	
@@ -123,19 +127,33 @@ public class DownloadHtml {
 	 * @param folderName the name of the folder in which we want to put the new file
 	 * @return the new file's name
 	 */
-	public String generateFileName (String folderName) {
+	private String generateFileName (String folderName) {
 		StringBuilder sb = new StringBuilder(10);
 		String fileName;
+		
 		for (;;) {
+			
+			// produce the random number 0-9
 			Random ran1 = new Random();
+			
+			// put the number in the StringBuilder
 			sb.append(ran1.nextInt(9));
+			
 			for (int i = 0; i < 9; i++) {
+				// produce random alphabet letters
 				Random ran2 = new Random();
+				
+				// put the letters in the StringBuilder
 				sb.append(ab[ran2.nextInt(26)]);
 			}
+			
 			fileName = sb.toString();
+			
+			// create the file
 			File testFile = new File(path + folderName + "\\" + fileName + ".txt");
-			if (!existsFile(testFile)) {
+			
+			// test if the file exists
+			if (! existsFile(testFile)) {
 				break;
 			}
 		}
@@ -147,7 +165,7 @@ public class DownloadHtml {
 	 * @param testFile File object which contains the path of the file we want to create
 	 * @return true if the file already exists or false if the file is not contained in the given directory
 	 */
-	public boolean existsFile (File testFile) {
+	private boolean existsFile (File testFile) {
 		if (testFile.exists()) {
 			return true;
 		}

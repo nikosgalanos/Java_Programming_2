@@ -1,4 +1,3 @@
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -12,19 +11,33 @@ import java.util.Queue;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+/**
+ * Class which connects all the other classes of the package
+ * 
+ * @author Web Masters
+ */
 public class Crawl {
 	
+	// links which the user inserts
 	private URL startingURL;
-	private Queue<URL> links = new LinkedList<URL>();
+	// queue where links to be checked are stored
+	private Queue<URL> linksQueue = new LinkedList<URL>();
+	// hashmap which contains the final list of the links and paths
 	private HashMap<URL,String> finalList = new HashMap<URL,String>();
 	private String path;
 	private static int doubleLinks=0;
-	private static Component parentComponent = null;
 	
+	/**
+	 * Constructor
+	 * @param startingURL the url which is received from the user
+	 */
 	public Crawl(String startingURL) throws MalformedURLException {
 		this.startingURL = new URL(startingURL);
 	}
 	
+	/**
+	 * Method which does the crawling, the basic job of a web crawler
+	 */
 	public void crawl() throws IOException, SQLException {
 		URL urlToBeChecked, urlToBeSaved;
 		int loopCounter=0, pagesCounter;
@@ -47,14 +60,14 @@ public class Crawl {
 		for(;;) {
 			
 			// the loop breaks if the waiting time is over or the queue is empty
-			if (minutesCounter(startTime)>=waitingTime || links.size()==0) {
+			if (minutesCounter(startTime)>=waitingTime || linksQueue.size()==0) {
 				break;
 			}
 			
 			loopCounter++;
 			
 			// retrieves the first url of the queue 
-			urlToBeChecked= pullFirstElement(links);
+			urlToBeChecked= pullFirstElement(linksQueue);
 			
 			LinksExtractorVag le = new LinksExtractorVag(urlToBeChecked);
 			printStatus(loopCounter, urlToBeChecked);
@@ -72,7 +85,7 @@ public class Crawl {
 			// counter for the examined pages
 			pagesCounter=0;
 			
-			// while (the HashSet has links AND we don't exceed the up limit
+			// while (the HashSet has links AND we don't exceed the upper limit
 			while (i.hasNext() && givenPages>pagesCounter) {
 				pagesCounter++;
 				try {
@@ -98,53 +111,86 @@ public class Crawl {
 		insertDataToDB();
 	}
 	
-	
-	public URL pullFirstElement(Queue<URL> q) {
+	/**
+	 * Method which returns the first link and removes it from the queue
+	 * @param q the queue of the links to be examined
+	 * @return the first element (link) of the queue
+	 */
+	private URL pullFirstElement(Queue<URL> q) {
 		return q.poll();
 	}
 	
-	public void printStatus(int loopCount,  URL urlToBeChecked) {
-		System.out.println("** Queue Size: " + links.size() + " | Links Count: " +
+	/**
+	 * Method which prints useful details of the proccess
+	 * @param loopCount the number of the loops so far
+	 * @param urlToBeChecked the url to be examined
+	 */
+	private void printStatus(int loopCount,  URL urlToBeChecked) {
+		System.out.println("** Queue Size: " + linksQueue.size() + " | Links Count: " +
 			+ finalList.size() + " | Checking " + (loopCount) + " link:    " + urlToBeChecked.toString());
 	}
 	
-	public void printEndStatus() {
+	/**
+	 * Method which prints the number of the links saves and also the links which showed up more than one times
+	 */
+	private void printEndStatus() {
 		System.out.println("END. "+ finalList.size() + " pages were saved. Double links: " + doubleLinks);
 	}
 	
-	public void insertDataToDB() throws SQLException {
+	/**
+	 * Method which makes the connection with the database
+	 */
+	private void insertDataToDB() throws SQLException {
 		DataBaseConn dbc = new DataBaseConn();
 		dbc.insertData(finalList);
 		System.out.println("Links added to DataBase!");
 	}
 	
-	public void saveFile(URL url) throws UnsupportedEncodingException, IOException {
+	/**
+	 * Method which contributes to the downloading
+	 * @param url the url whose html code will be downloaded
+	 */
+	private void saveFile(URL url) throws UnsupportedEncodingException, IOException {
+		// if url isn't alredy in the list
 		if (!finalList.containsKey(url)) {
+			
+			// download the html page
 			DownloadHtml dh = new DownloadHtml(url, path);
 			String directoryName=dh.parseAndSaveHtml();
+			
+			// if no exception is thrown
 			if (directoryName!=null) {
+				// put url into hashmap
 				finalList.put(url, directoryName);
-				links.add(url);
+				// put url into the queue in order to be examined
+				linksQueue.add(url);
 			}
+		// if url has shown up already
 		} else {
 			doubleLinks++;
 		}
 	}
 	
-	public String setPath() {
+	/**
+	 * Method which uses java swing in order to help the user choose the download folder
+	 * in which the html pages will be saved
+	 * @return the path of the choosen folder
+	 */
+	private String setPath() {
 		File folder;
-		System.out.println("Please enter the folder in which the html files will be saved:");
+		JOptionPane.showMessageDialog(null, "Please enter the folder in which the html files will be saved.");
 		JFileChooser fc = new JFileChooser();
 
-		fc.setCurrentDirectory(new java.io.File("."));
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		for(;;) {
 			int returnVal = fc.showOpenDialog(null);
+			// if the user chooses a folder
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				folder = fc.getSelectedFile();
 				break;
 			}
+			// if the user presses cancel button
 			else if (returnVal == JFileChooser.CANCEL_OPTION) {
 				continue;
 			}
@@ -152,13 +198,24 @@ public class Crawl {
 		return folder.toString();
 	}
 	
-	public float minutesCounter(long start) {
+	/**
+	 * Method which counts the the minutes passed since the crawl started
+	 * @param start the time that the crawl started
+	 * @return how much time passed since the crawl started
+	 */
+	private float minutesCounter(long start) {
 		long elapsedTimeMillis = System.currentTimeMillis()-start;
+		
+		// conversion from millisecond to minutes
 		float elapsedTimeMin = elapsedTimeMillis/(60*1000F);
 		return elapsedTimeMin;
 	}
 	
-	public float getWaitingTime() {
+	/**
+	 * Method which asks for the user (in a graphic way) to enter the time which is willing to wait
+	 * @return the process time
+	 */
+	private float getWaitingTime() {
 		String min = null;
 		for(;;) {
 			try {
@@ -166,7 +223,7 @@ public class Crawl {
 				Integer.parseInt(min);
 			}
 			catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(parentComponent, "Error, null or not an integer. Please try again.");
+				JOptionPane.showMessageDialog(null, "Error, null or not an integer. Please try again.", null, JOptionPane.ERROR_MESSAGE);
 				continue;
 			}
 			break;
@@ -174,7 +231,11 @@ public class Crawl {
 		return Float.parseFloat(min);
 	}
 	
-	public int getLinksPerPage() {
+	/**
+	 * Method which asks for the user (in a graphic way) to enter the links he want per html page
+	 * @return the number of links per html page
+	 */
+	private int getLinksPerPage() {
 		String pages = null;
 		for(;;) {
 			try {
@@ -182,7 +243,7 @@ public class Crawl {
 				Integer.parseInt(pages);
 			}
 			catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(parentComponent, "Error, null or not an integer. Please try again.");
+				JOptionPane.showMessageDialog(null, "Error, null or not an integer. Please try again.", null, JOptionPane.ERROR_MESSAGE);
 				continue;
 			}
 			break;
@@ -190,19 +251,21 @@ public class Crawl {
 		return Integer.parseInt(pages);
 	}
 	
-	public void addLinkstoQueue () {
+	/**
+	 * Method which adds the starting link and the rest of links into the queue
+	 */
+	private void addLinkstoQueue () {
+		linksQueue.add(startingURL);
 		try {
-			links.add(startingURL);
-			links.add(new URL("http://www.cnn.gr/"));
-			links.add(new URL("http://www.bbc.com/"));
-			links.add(new URL("http://www.newsit.gr/"));
-			links.add(new URL("http://www.capital.gr/"));
-			links.add(new URL("http://www.tanea.gr/"));
-			links.add(new URL("http://news247.gr/"));
+			linksQueue.add(new URL("http://www.cnn.gr/"));
+			linksQueue.add(new URL("http://www.bbc.com/"));
+			linksQueue.add(new URL("http://www.newsit.gr/"));
+			linksQueue.add(new URL("http://www.capital.gr/"));
+			linksQueue.add(new URL("http://www.tanea.gr/"));
+			linksQueue.add(new URL("http://news247.gr/"));
 		} catch (MalformedURLException e) {
-			System.err.println("One of the default links is not correct");
-		}
-		
+			JOptionPane.showMessageDialog(null, "Error with the links inserted.", null, JOptionPane.ERROR_MESSAGE);
+		}	
 	}
 		
 }

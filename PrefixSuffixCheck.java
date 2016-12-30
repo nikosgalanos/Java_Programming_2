@@ -20,7 +20,7 @@ public class PrefixSuffixCheck {
 	 * Constructor
 	 * @param url the url we want to examine (URL Object)
 	 */
-	public PrefixSuffixCheck (URL url) {
+	public PrefixSuffixCheck(URL url) {
 		urlString=url.toString();
 	}
 	
@@ -28,7 +28,7 @@ public class PrefixSuffixCheck {
 	 * Constructor
 	 * @param url the url we want to examine (String)
 	 */
-	public PrefixSuffixCheck (String url) {
+	public PrefixSuffixCheck(String url) {
 		urlString=url;
 	}
 	
@@ -36,24 +36,24 @@ public class PrefixSuffixCheck {
 	 * Method which checks if the given url contains approved or not suffixes
 	 * @return true if the url contains one of the approved suffixes or false if it doesn't
 	 */
-	public boolean suffix () throws MalformedURLException {
+	public boolean suffix() throws MalformedURLException {
 		int i;
-		for (i=0; i<notApprovedSuffixes.length; i++) {
+		for (i = 0; i < notApprovedSuffixes.length; i++) {
 			if (urlString.endsWith(notApprovedSuffixes[i])) {
 				return false;
 			}
 		}
-		for (i=0; i<notApprovedContains.length; i++) {
+		for (i = 0; i < notApprovedContains.length; i++) {
 			if (urlString.contains(notApprovedContains[i])) {
 				return false;
 			}
 		}
-		for (i=0; i<approvedSuffixes.length; i++) {
+		for (i = 0; i < approvedSuffixes.length; i++) {
 			if (urlString.endsWith(approvedSuffixes[i]))  {
 				return true;
 			}	
 		}
-		for (i=0; i<approvedContains.length; i++) {
+		for (i = 0; i < approvedContains.length; i++) {
 			if (urlString.contains(approvedContains[i]))  {
 				return true;
 			}
@@ -65,11 +65,12 @@ public class PrefixSuffixCheck {
 	 * Method which checks if the url starts with the http or th https protocol
 	 * @return true if the url starts with http or https or false if it doesn't
 	 */
-	public boolean prefix () {
+	public boolean prefix() {
 		if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
 	

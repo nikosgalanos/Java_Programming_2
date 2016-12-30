@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.HashSet;
 
 public class LinksExtractorVag {
-	public static final int MAX_SIZE_PATH=5;
+	public static final int MAX_SIZE_PATH = 5;
 	private URL url;
 	private HashSet<String> links = new HashSet<String>(1);
 	private CharSequence[] approvedContains = {".html", ".htm", ".asp", 
@@ -114,7 +114,7 @@ public class LinksExtractorVag {
 		hrefPosition=inputLine.indexOf("href=\"", firstHrefIndex+1);
 		if (hrefPosition != -1) {
 			wwwPosition=hrefPosition+6;
-			endPosition=inputLine.indexOf("\"",wwwPosition);
+			endPosition=inputLine.indexOf("\"", wwwPosition);
 			link = inputLine.substring(wwwPosition, endPosition);
 			temp[0]=link; temp[1]=hrefPosition.toString();
 			return temp;
