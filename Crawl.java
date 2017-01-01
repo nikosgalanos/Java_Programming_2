@@ -69,7 +69,8 @@ public class Crawl {
 			// retrieves the first url of the queue 
 			urlToBeChecked= pullFirstElement(linksQueue);
 			
-			LinksExtractorVag le = new LinksExtractorVag(urlToBeChecked);
+			/*LinksExtractorVag le = new LinksExtractorVag(urlToBeChecked);*/
+			LinksEx le = new LinksEx(urlToBeChecked);
 			printStatus(loopCounter, urlToBeChecked);
 			try {
 				// checks for available links and chooses the links we want

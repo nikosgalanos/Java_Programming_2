@@ -147,7 +147,7 @@ public class DataBaseConn {
 	 */
 	private static String getDatabasePath() {
 		String databasePath = null;
-		String databasePathEx = "^jdbc:sqlserver://.+:1025;databaseName=.+$";
+		String databasePathEx = "^jdbc:sqlserver://.+:[0-9]+;databaseName=.+$";
 		Pattern p = Pattern.compile(databasePathEx);
 			for (;;) {
 				databasePath = JOptionPane.showInputDialog("Enter your local database path:");
