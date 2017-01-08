@@ -38,7 +38,7 @@ As this program is only made for university purposes not all of the found urls a
 
 **DataBaseConn** is using an SQL driver in order to make a jdbc connection between our Java program and Microsoft SQL Server. It reads a HashMap in which all the visited urls are saved as keys and the computer paths in which the downloaded html page is saved are saved as values, and then it inserts these data in the pre-created SQL table by making an "insert" statement.
 
-**Crawl** is the "heart" of our program. It coordinates all of the pre-described functions by properly creating and it also handles everything that can go wrong so as the programm will not crash at any point. 
+**Crawl** is the "heart" of our program. It coordinates all of the pre-described functions by properly creating objects of the previous classes and it also handles everything that can go wrong so as the program will not crash at any point. 
 
 **Demo** class is nothing more than the class that contains the main method which makes the program run by creating an object of the _Crawl_ class.
 
