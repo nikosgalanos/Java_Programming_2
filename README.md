@@ -18,7 +18,7 @@ In order to execute the program you just need to use the created .jar file by gi
 java -jar Beta_1.3.jar http://www.startingurl.com  
 where starting url is the first website you want to crawl. You also need to have already created a table with two columns in a local database using the Microsoft SQL Server and a folder in your computer in which all the downloaded html pages will be saved.
 
-### Short class Description
+### Short Program Description
 
 Our web crawler consists of the following 6 classes:
 * LinksEx
