@@ -36,7 +36,7 @@ As this program is only made for university purposes not all of the found urls a
 
 **DownloadHtml** is a class which creates some sub-folders into your already created folder, giving them the name of the website that it's html pages will be saved. For example all the html pages coming from the website www.aueb.gr will be saved in a folder named "aueb". It then downloads the html page of all the approved and fixed urls that our crawler has already visited.
 
-**DataBaseConn** is using an SQL driver in order to make a jdbc connection between our Java program and Microsoft SQL Server. It reads a HashMap in which all the visited urls are saved as keys and the computer paths in which the downloaded html page is saved are saved as values, and then it inserts these data in the pre-created SQL table by making an "insert" statement.
+**DataBaseConn** is using an SQL driver in order to make a jdbc connection between our Java program and Microsoft SQL Server. It reads a HashMap in which all the visited urls are saved as keys and the computer paths in which the downloaded html page is saved, are saved as values, and then it inserts these data in the pre-created SQL table by making an "insert" statement.
 
 **Crawl** is the "heart" of our program. It coordinates all of the pre-described functions by properly creating objects of the previous classes and it also handles everything that can go wrong so as the program will not crash at any point. 
 
