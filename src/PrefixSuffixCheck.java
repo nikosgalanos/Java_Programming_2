@@ -1,78 +1,73 @@
 import java.net.MalformedURLException;
 import java.net.URL;
+
 /**
- * Class which helps so as to determine if the examined link has the acceptable format
+ * Class which helps so as to determine if the examined link has the acceptable format.
  * @author Web Masters
  */
 public class PrefixSuffixCheck {
-	
+
 	private String urlString;
-	private static final String[] approvedSuffixes = {".html", ".htm", ".asp", ".aspx", 
+	private static final String[] APPROVED_SUFFIXES = {".html", ".htm", ".asp", ".aspx",
 			".php", ".jsp", ".jspx", ".xml", "/"};
-	private static final CharSequence[] approvedContains = {".html", ".htm", ".asp", 
+	private static final CharSequence[] APPROVED_CONTAINS = {".html", ".htm", ".asp",
 			".aspx", ".php", ".jsp", ".jspx", ".xml"};
-	private static final String[] notApprovedSuffixes = {".jpeg", ".ico", ".css", 
+	private static final String[] NOT_APPROVED_SUFFIXES = {".jpeg", ".ico", ".css",
 			".png", ".doc", ".pdf", ".jpg", ".js", ".rdf"};
-	private static final CharSequence[] notApprovedContains = {".jpeg", ".ico", ".css", 
+	private static final CharSequence[] NOT_APPROVED_CONTAINS = {".jpeg", ".ico", ".css",
 			".png", ".doc", ".pdf", ".jpg", ".js", "/css", ".rdf", "javascript"};
-	
+
 	/**
-	 * Constructor
+	 * Constructor.
 	 * @param url the url we want to examine (URL Object)
 	 */
 	public PrefixSuffixCheck(URL url) {
-		urlString=url.toString();
+		urlString = url.toString();
 	}
-	
+
 	/**
-	 * Constructor
+	 * Constructor.
 	 * @param url the url we want to examine (String)
 	 */
 	public PrefixSuffixCheck(String url) {
-		urlString=url;
+		urlString = url;
 	}
-	
+
 	/**
-	 * Method which checks if the given url contains approved or not suffixes
+	 * Method which checks if the given url contains approved or not suffixes.
 	 * @return true if the url contains one of the approved suffixes or false if it doesn't
 	 */
-	public boolean suffix() throws MalformedURLException {
+	protected boolean suffix() throws MalformedURLException {
 		int i;
-		for (i = 0; i < notApprovedSuffixes.length; i++) {
-			if (urlString.endsWith(notApprovedSuffixes[i])) {
+		for (i = 0; i < NOT_APPROVED_SUFFIXES.length; i++) {
+			if (urlString.endsWith(NOT_APPROVED_SUFFIXES[i])) {
 				return false;
 			}
 		}
-		for (i = 0; i < notApprovedContains.length; i++) {
-			if (urlString.contains(notApprovedContains[i])) {
+		for (i = 0; i < NOT_APPROVED_CONTAINS.length; i++) {
+			if (urlString.contains(NOT_APPROVED_CONTAINS[i])) {
 				return false;
 			}
 		}
-		for (i = 0; i < approvedSuffixes.length; i++) {
-			if (urlString.endsWith(approvedSuffixes[i]))  {
+		for (i = 0; i < APPROVED_SUFFIXES.length; i++) {
+			if (urlString.endsWith(APPROVED_SUFFIXES[i]))  {
 				return true;
-			}	
+			}
 		}
-		for (i = 0; i < approvedContains.length; i++) {
-			if (urlString.contains(approvedContains[i]))  {
+		for (i = 0; i < APPROVED_CONTAINS.length; i++) {
+			if (urlString.contains(APPROVED_CONTAINS[i]))  {
 				return true;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Method which checks if the url starts with the http or th https protocol
+	 * Method which checks if the url starts with the http or th https protocol.
 	 * @return true if the url starts with http or https or false if it doesn't
 	 */
-	public boolean prefix() {
-		if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
-			return true;
-		} else {
-			return false;
-		}
+	protected boolean prefix() {
+		return urlString.startsWith("http://") || urlString.startsWith("https://");
 	}
-	
-	
-	
+
 }
