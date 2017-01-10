@@ -1,0 +1,6 @@
+exclude:
+- /initial commits/.*
+- /my-maven-project/src/.*
+component_depth: 1
+languages:
+- java
