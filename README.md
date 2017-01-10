@@ -15,7 +15,7 @@ so as to provide all the required data that a search engine needs to do its job.
 
 Our crawler is fully written in Java (version 7+) and it's output is a local database on Microsoft SQL Server.  
 In order to execute the program you just need to use the created .jar file by giving the following command in the cmd
-java -jar Beta_1.3.jar http://www.startingurl.com  
+java -jar Beta_1.4.jar http://www.startingurl.com  
 where starting url is the first website you want to crawl. You also need to have already created a table with two columns in a local database using the Microsoft SQL Server and a folder in your computer in which all the downloaded html pages will be saved.
 
 ### Short Program Description
