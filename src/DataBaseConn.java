@@ -129,15 +129,19 @@ public class DataBaseConn {
 		}
 
 		for (URL url : finalList.keySet()) {
-			statement = connection.createStatement();
+			try {
+				statement = connection.createStatement();
 
-			DataBaseConn.setLink(url.toString());
-			DataBaseConn.setPath(finalList.get(url).toString());
+				DataBaseConn.setLink(url.toString());
+				DataBaseConn.setPath(finalList.get(url).toString());
 
-			// insert url and path into the table
-			statement.executeUpdate("INSERT INTO " + tableName +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
+				// insert url and path into the table
+				statement.executeUpdate("INSERT INTO " + tableName +  " VALUES('" + DataBaseConn.getLink() + "' , '" + DataBaseConn.getPath() + "')");
 
-			statement.close();
+				statement.close();
+			} catch (SQLException e) {
+				continue;
+			}
 		}
 		connection.close();
 	}

@@ -107,8 +107,8 @@ public class DownloadHtml {
 				return stringUrl.substring(position1 + 7, position2);		// position + 7 = first letter of domain
 			}
 		} catch (StringIndexOutOfBoundsException e) {
-			Random ran = new Random(RANDOM_WORDS.length - 1);
-			return RANDOM_WORDS[ran.nextInt()];
+			Random ran = new Random();
+			return RANDOM_WORDS[ran.nextInt(RANDOM_WORDS.length - 1)];
 		}
 	}
 
